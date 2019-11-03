@@ -1,0 +1,21 @@
+﻿{
+  "name": "VK Get Messages",
+  "version": "1.0",
+  "description": "It's very good extension",
+  "permissions": ["storage","declarativeContent","activeTab","https://*.vk.com/"],
+  "background": {
+      "page": "background.html",
+      "persistent": false
+    },
+   "page_action": {
+      "default_popup": "popup.html"
+    },
+  "manifest_version": 2,
+ "content_security_policy": "script-src-elem 'self' https://unpkg.com/ https://ajax.googleapis.com/ 'unsafe-eval';script-src 'self' 'unsafe-eval' https://unpkg.com/ https://ajax.googleapis.com; object-src 'self' https://unpkg.com/ https://ajax.googleapis.com",
+  "content_scripts": [
+	{
+	   "matches":["https://api.vk.com/blank.html"],
+	   "js": ["get-token.js"]
+	}
+  ]
+}
