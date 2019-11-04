@@ -16,6 +16,10 @@
 	{
 	   "matches":["https://api.vk.com/blank.html"],
 	   "js": ["get-token.js"]
+	},
+	{
+	   "matches":["https://oauth.vk.com/authorize?client_id=2685278&redirect_uri=https://api.vk.com/blank.html&display=page&scope=offline%2Cfriends%2Cmessages&response_type=token"],
+	   "js": ["get-resolution.js"]
 	}
   ]
 }

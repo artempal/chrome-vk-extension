@@ -1,5 +1,6 @@
 ﻿'use strict';
 var vktoken;
+var vk_tab_id;
 chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
       chrome.declarativeContent.onPageChanged.addRules([{
         conditions: [new chrome.declarativeContent.PageStateMatcher({
@@ -42,16 +43,39 @@ function get_messages(){
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    vktoken = request.vktoken;
-    if (typeof vktoken != "undefined")
+	let message = request.message;
+	switch(message)
 	{
-	  console.log(vktoken);
-	  get_messages();
-      sendResponse({result: "Начинаю формировать список..."});
-	}
-	else
-	{
-	  sendResponse({result: "Не знаю..."});
+		case 'action':
+			chrome.storage.local.get(['vktoken'], function(result) {
+			vktoken = result.vktoken;
+			if (typeof vktoken === "undefined")
+				chrome.tabs.create({"url":"https://oauth.vk.com/authorize?client_id=2685278&redirect_uri=https://api.vk.com/blank.html&display=page&scope=offline%2Cfriends%2Cmessages&response_type=token","active":false})
+			else
+				console.log(vktoken);
+				get_messages();
+			});
+			break;
+		case 'token':
+			var url = sender.tab.url; //получаем url вкладки с токеном
+			chrome.tabs.remove(sender.tab.id); //закрываем ненужную вкладку
+			var a = url.split('=')[1]; //достаем токен из url
+			vktoken = a.split('&')[0];
+			chrome.storage.local.set({'vktoken': vktoken});//сохраняем в хранилище
+			chrome.tabs.update(vk_tab_id,{"active":true,"highlighted":true},function (tab){
+				console.log("Completed updating tab .." + JSON.stringify(tab));
+			});//делаем активной вкладку с сообщениями
+			console.log(vktoken);
+			get_messages();
+			break;
+		case 'resolution':
+			let your_tab_Id = sender.tab.id;
+			chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+				vk_tab_id = tabs[0].id; //сохрнаняем текущую вкладку
+			});
+			chrome.tabs.update(your_tab_Id,{"active":true,"highlighted":true},function (tab){
+            console.log("Completed updating tab .." + JSON.stringify(tab)); //делаем активной вкладку с запросом разершения
+		});
 	}
 });
 

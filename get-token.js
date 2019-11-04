@@ -1,1 +1,1 @@
-﻿chrome.runtime.sendMessage({message: 'ok'});
+﻿chrome.runtime.sendMessage({message: 'token'});
