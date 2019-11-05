@@ -30,8 +30,22 @@ function get_messages(){
 				users.set(profile.id.toString(),profile.first_name+" " + profile.last_name)
 			});//создаем именованный массив где ключ - id юзера, а значение - его имя
 			console.log(users); 
+			let photo_urls = "";
 			items.forEach(function(item, i, items) {
-			  result_items.push({user_id:item.from_id,username:users.get(item.from_id.toString()),message:item.text})
+			  
+			  if (typeof item.attachments !== "undefined")
+			  {
+				  photo_urls = " ";
+				  let attachments = item.attachments;
+				  attachments.forEach(function(attachment,j,attachments) {
+				  if(attachment.type == 'photo')
+				  {
+					  photo_urls+= attachment.photo.sizes[attachment.photo.sizes.length-1].url + " ";
+				  }
+				});
+			  }
+			  
+			  result_items.push({user_id:item.from_id,username:users.get(item.from_id.toString()),message:item.text,photo:photo_urls})
 			});
 			console.log(res.response.items);
 			console.log(result_items);
