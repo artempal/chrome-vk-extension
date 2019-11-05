@@ -11,6 +11,18 @@ chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
       }]);
     });
 	
+function timeConverter(UNIX_timestamp){
+  var a = new Date(UNIX_timestamp * 1000);
+  var months = ['ЯНВ','ФЕВ','МАР','АПР','МАЙ','ИЮН','ИЮЛ','АВГ','СЕН','ОКТ','НОЯ','ДЕК'];
+  var year = a.getFullYear();
+  var month = months[a.getMonth()];
+  var date = a.getDate();
+  var hour = a.getHours();
+  var min = a.getMinutes();
+  var sec = a.getSeconds();
+  var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+  return time;
+}	
 
 function get_messages(){
 	chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
@@ -45,7 +57,7 @@ function get_messages(){
 				});
 			  }
 			  
-			  result_items.push({user_id:item.from_id,username:users.get(item.from_id.toString()),message:item.text,photo:photo_urls})
+			  result_items.push({user_id:item.from_id,username:users.get(item.from_id.toString()),message:item.text,photo:photo_urls,date:timeConverter(item.date)})
 			});
 			console.log(res.response.items);
 			console.log(result_items);
